@@ -32,7 +32,7 @@ app.set('view engine', 'ejs');
   `);
 });*/
 
-let nextVisitorId = 0;
+let nextVisitorId = 1;
 
 // the main page
 app.get('/', (req, res) => {

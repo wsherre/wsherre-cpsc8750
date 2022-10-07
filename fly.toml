@@ -1,4 +1,4 @@
-# fly.toml file generated for wsherre on 2022-09-30T10:20:41-04:00
+# fly.toml file generated for wsherre on 2022-10-07T11:34:37-04:00
 
 app = "wsherre"
 kill_signal = "SIGINT"
