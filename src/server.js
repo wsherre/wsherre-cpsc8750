@@ -32,12 +32,12 @@ app.set('view engine', 'ejs');
   `);
 });*/
 
-let nextVisitorId = 1;
+let nextVisitorId = 0;
 
 // the main page
 app.get('/', (req, res) => {
   let time_text = "";
-  console.log(Object.keys(req.cookies).length);
+  //console.log(Object.keys(req.cookies).length);
   //if there are no cookies in the brower, aka they never visted, set the cookies
   if(Object.keys(req.cookies).length == 0){
     res.cookie('visitorId', nextVisitorId++);
@@ -47,11 +47,11 @@ app.get('/', (req, res) => {
   }else{
     // get the seconds difference from the cookies
     let sec = Math.round(((new Date().getTime() - new Date(req.cookies['visited']).getTime()) / 1000), 0);
-    console.log(sec);
+    //console.log(sec);
     time_text = "You last visited " + sec + " seconds ago.";
     res.cookie('visited', new Date().toString());
   }
-  console.log(req.cookies);
+  //console.log(req.cookies);
   res.render('welcome', {
     name: "World!",
     date: new Date().toLocaleString(),
