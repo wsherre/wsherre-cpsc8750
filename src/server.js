@@ -1,6 +1,6 @@
 // use the express library
 const express = require('express');
-const cookieParser = require('cookie-parser');
+const cookieParser = require('../node_modules/cookie-parser');
 
 // create a new server application
 const app = express();
