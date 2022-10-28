@@ -1,6 +1,7 @@
 // use the express library
 const express = require('express');
 const cookieParser = require('cookie-parser');
+const fetch = require('node-fetch');
 
 // create a new server application
 const app = express();
@@ -14,23 +15,6 @@ const port = process.env.PORT || 3000;
 app.use(express.static('public'));
 app.use(cookieParser());
 app.set('view engine', 'ejs');
-// The main page of our website
-/*app.get('/', (req, res) => {
-  res.send(`
-    <!DOCTYPE html>
-    <html lang="en">
-      <head>
-        <meta charset="UTF-8" />
-        <title>An Example Title</title>
-        <link rel="stylesheet" href="app.css">
-      </head>
-      <body>
-        <h1>Hello, World!</h1>
-        <p>HTML is so much better than a plain string!</p>
-      </body>
-    </html>
-  `);
-});*/
 
 let nextVisitorId = 1;
 
@@ -60,6 +44,50 @@ app.get('/', (req, res) => {
   });
 });
 
+app.get("/trivia", async (req, res) => {
+  // fetch the data
+  const response = await fetch("https://opentdb.com/api.php?amount=1&type=multiple");
+
+  // fail if bad response
+  if (!response.ok) {
+    res.status(500);
+    res.send(`Open Trivia Database failed with HTTP code ${response.status}`);
+    return;
+  }
+
+  // interpret the body as json
+  const content = await response.json();
+
+
+  // fail if db failed
+  if (content.response_code != 0) {
+    res.status(500);
+    res.send(`Open Trivia Database failed with internal response code ${content.response_code}`);
+    return;
+  }
+
+  var ind = Math.floor(Math.random() * 4);
+  answers = content.results[0].incorrect_answers
+  correct_answer = content.results[0].correct_answer
+  answers.splice(ind, 0, correct_answer);
+
+  const answerLinks = answers.map(answer => {
+    return `<a style='color: red' href="javascript:alert('${
+      answer === correct_answer ? 'Correct!' : 'Incorrect, Please Try Again!'
+      }')">${answer}</a>`
+  })
+  console.log(answerLinks)
+  
+  // respond to the browser
+  // TODO: make proper html
+  //res.send(JSON.stringify(content, 2));
+  res.render('trivia', {
+    question: content.results[0].question,
+    answers: answerLinks,
+    category: content.results[0].category,
+    difficulty: content.results[0].difficulty
+  });
+});
 
 
 // Start listening for network connections
